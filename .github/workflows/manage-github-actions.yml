@@ -3,16 +3,17 @@ name: Manage Github Actions
 on:
     workflow_dispatch: 
 
-jobs:
-    Decrypt-file:
-        runs-on: ubuntu-latest
-        env:
-            passphraseFile: ${{ secrets.FILE_PASS_PHRASE }}
-        steps:
-            - name: Decrypt and read file
-            uses: actions/checkout@v1
-            run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json upsertSecretsAndVars.json.gpg
-            - name: Print file content
-            uses: actions/checkout@v1
-            run: cat $HOME/payload.json
+env:
+    passphraseFile: ${{ secrets.FILE_PASS_PHRASE }}
 
+jobs:    
+    DecryptFile:
+      runs-on: ubuntu-latest   
+      
+      steps:
+      - uses: actions/checkout@v2
+      - name: Decrypt and read file
+        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json upsertSecretsAndVars.json.gpg
+        
+      - name: Print file content
+        run: cat $HOME/payload.json
