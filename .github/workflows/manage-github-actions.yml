@@ -11,7 +11,7 @@ env:
     GIT_OWNER: ${{ secrets.GIT_OWNER }}
 
 jobs:    
-    DecryptFile:
+    DecryptFileAndRunPython:
       runs-on: ubuntu-latest   
       
       steps:
