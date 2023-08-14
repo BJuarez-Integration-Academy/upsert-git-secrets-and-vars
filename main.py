@@ -56,11 +56,11 @@ for repoData in payload['repoSecrets']:
         upsertSecretOrVariable(url,repoSecrets['value'],repoKeyId)
         repoNames.add(repoData['repoName'])
 
-print("Tiggering WFs")
 for repo in repoNames:
     url = "https://api.github.com/repos/"+ORG_NAME+"/"+repo+"/actions/workflows"
     getResp = requests.get(url, headers = header)
     if getResp.status_code == 200:
+        print("====> Triggering "+repo +" Workflow")
         getResp = json.loads(getResp.text) 
         wfId=getResp['workflows'][0]['id']
         print(wfId)
@@ -69,8 +69,8 @@ for repo in repoNames:
             "ref":"dev"
         }
         response = requests.request("POST",url,headers=header,data=json.dumps(request))
-        print(response.status_code)
-        print(response.text)            
+        if response.status_code == 204 :
+            print("====> Status: Wf Triggered Successfully")
 
     
         
