@@ -1,17 +1,21 @@
-name: Manage Github Actions
+name: Manage Github Actions Secrets and Variables
 
 on:
     workflow_dispatch: 
 
 env:
     passphraseFile: ${{ secrets.FILE_PASS_PHRASE }}
+    GIT_REPO_PUBLIC_KEY: ${{ secrets.GIT_REPO_PUBLIC_KEY }}
+    GIT_REPO_KEY_ID: ${{ secrets.GIT_REPO_KEY_ID }}
+    GIT_PAT: ${{ secrets.GIT_PAT }}
+    GIT_OWNER: ${{ secrets.GIT_OWNER }}
 
 jobs:    
     DecryptFile:
       runs-on: ubuntu-latest   
       
       steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Decrypt and read file
         run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json upsertSecretsAndVars.json.gpg
 
@@ -20,3 +24,16 @@ jobs:
         
       - name: Print file content
         run: cat $HOME/payload.json
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.4' # install the python version needed
+
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: execute py script # run main.py
+        run: python main.py
