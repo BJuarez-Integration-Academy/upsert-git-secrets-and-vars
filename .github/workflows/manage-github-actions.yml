@@ -5,8 +5,6 @@ on:
 
 env:
     passphraseFile: ${{ secrets.FILE_PASS_PHRASE }}
-    GIT_REPO_PUBLIC_KEY: ${{ secrets.GIT_REPO_PUBLIC_KEY }}
-    GIT_REPO_KEY_ID: ${{ secrets.GIT_REPO_KEY_ID }}
     GIT_PAT: ${{ secrets.GIT_PAT }}
     GIT_OWNER: ${{ secrets.GIT_OWNER }}
 
@@ -17,10 +15,7 @@ jobs:
       steps:
       - uses: actions/checkout@v3
       - name: Decrypt and read file
-        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json upsertSecretsAndVars.json.gpg
-
-      - name: Printing Home variable
-        run: echo $HOME
+        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json payload.json.gpg
         
       - name: Print file content
         run: cat $HOME/payload.json
