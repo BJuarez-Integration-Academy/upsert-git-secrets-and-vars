@@ -27,7 +27,7 @@ jobs:
       - name: listing files
         run: ls
       - name: getting root dir
-        run: pwd
+        run: echo %GITHUB_WORKSPACE%
       - name: install python packages
         run: |
           python -m pip install --upgrade pip
