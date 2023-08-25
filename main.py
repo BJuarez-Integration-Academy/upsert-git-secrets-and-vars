@@ -22,15 +22,13 @@ with open(rpath + "/"+files[0]) as f:
 if len(payload['orgGithubActions']['secretList']) > 0:
     print('****************ORG Secrets*********************')
     for orgSecret in payload['orgGithubActions']['secretList']:
-        #lm.upsertOrgSecret(orgSecret['name'], orgSecret['value'])
-        print("Secret Name: " + orgSecret['name'])
+        lm.upsertOrgSecret(orgSecret['name'], orgSecret['value'])
 
 #Upsert git actions org variables
 if len(payload['orgGithubActions']['variableList']) > 0:
     print('***************ORG Variables**********************')
     for orgVariable in payload['orgGithubActions']['variableList']:
-        #lm.upsertOrgVariable(orgVariable['name'], orgVariable['value'])
-        print("Variable Name: " + orgVariable['name'])
+        lm.upsertOrgVariable(orgVariable['name'], orgVariable['value'])
 
 if len(payload['orgGithubActions']['reposToTrigger']) > 0:
     print("[ORG level]-Triggering workflows from below repos:")
