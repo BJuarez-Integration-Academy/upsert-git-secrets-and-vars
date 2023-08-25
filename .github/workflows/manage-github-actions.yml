@@ -4,9 +4,10 @@ on:
     workflow_dispatch: 
 
 env:
-    passphraseFile: ${{ secrets.FILE_PASS_PHRASE }}
-    GIT_PAT: ${{ secrets.GIT_PAT }}
-    GIT_OWNER: ${{ secrets.GIT_OWNER }}
+    passphraseFile: ${{ secrets.POC_FILE_PASS_PHRASE }}
+    POC_GIT_PAT: ${{ secrets.POC_GIT_PAT }}
+    POC_GIT_OWNER: ${{ secrets.POC_GIT_OWNER }}
+    GITHUB_ROOT_DIR: ${{ github.workspace }}
 
 jobs:    
     DecryptFileAndRunPython:
@@ -15,10 +16,10 @@ jobs:
       steps:
       - uses: actions/checkout@v3
       - name: Decrypt and read file
-        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output $HOME/payload.json payload.json.gpg
-        
-      - name: Print file content
-        run: cat $HOME/payload.json
+        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --use-embedded-filename *.json.gpg
+      
+      - name: list files
+        run: ls
 
       - name: setup python
         uses: actions/setup-python@v4
