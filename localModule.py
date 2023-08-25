@@ -48,7 +48,7 @@ def getRepoPublicKey(repoName:str)->dict:
         response =json.loads(response.text)
         encryptionResorces["key_id"] = response["key_id"]
         encryptionResorces["public_key"] = response["key"]
-        print("KeyId and PublicKey generated successfully")
+        #print("KeyId and PublicKey generated successfully")
     else:
         print("Error: While generating KeyId and publicKey")
         print("Error: "+response.text)
@@ -67,7 +67,7 @@ def getOrgPublicKey()->dict:
         response =json.loads(response.text)
         encryptionResorces["key_id"] = response["key_id"]
         encryptionResorces["public_key"] = response["key"]
-        print("KeyId and PublicKey generated successfully")
+        #print("KeyId and PublicKey generated successfully")
     else:
         print("Error: While generating KeyId and publicKey")
         print("Error: "+response.text)
