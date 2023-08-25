@@ -18,7 +18,7 @@ jobs:
       - name: Cheking gpg version
         run: gpg --version
       - name: Decrypt and read file
-        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --use-embedded-filename *.json.gpg
+        run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --output snowflake-sapi_dev.json snowflake-sapi_dev.json.gpg
       
       - name: list files
         run: ls
