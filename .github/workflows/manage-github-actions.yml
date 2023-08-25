@@ -15,14 +15,10 @@ jobs:
       
       steps:
       - uses: actions/checkout@v3
-      - name: Cheking gpg version
-        run: gpg --version
+
       - name: Decrypt and read file
         run: gpg --quiet --batch --yes --decrypt --passphrase="$passphraseFile" --use-embedded-filename *.json.gpg
-      
-      - name: list files
-        run: ls
-
+        
       - name: setup python
         uses: actions/setup-python@v4
         with:
