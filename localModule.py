@@ -77,11 +77,18 @@ def getOrgPublicKey()->dict:
 def upsertOrgSecret(orgSecretName:str, orgSecretValue:str):
     encryptionResources = getOrgPublicKey()
     secretValue = encrypt(encryptionResources["public_key"],orgSecretValue)
+    listRepoIds = getReposIds(orgSecretName)
     body = {
         "encrypted_value": "",
         "key_id": "",
         "visibility": "all"
     }
+    if len(listRepoIds) > 0:
+        body["visibility"] = "selected"
+        body["selected_repository_ids"] = listRepoIds
+    print("New body:")
+    print(json.dumps(body))
+    
     body["encrypted_value"] = secretValue
     body["key_id"] = encryptionResources["key_id"]
     url = "https://api.github.com/orgs/"+ORG_NAME+"/actions/secrets/"+orgSecretName
@@ -197,3 +204,52 @@ def triggerWorkflow(repoName: str,env:str):
             print("====> Status: Wf Triggered Successfully")
         else: print("Error while triggering the workflow from repo: "+ repoName)
     else: print("Error while getting workflow ID from repo: "+ repoName)
+
+#################################-Get List of REPO IDs with visibility of a secret-######################
+def getReposIds(secretName: str):
+    url = "https://api.github.com/orgs/"+ORG_NAME+"/actions/secrets/"+secretName+"/repositories"
+    listRepoIds = []
+    getResp = requests.get(url, headers = header)
+    if getResp.status_code == 200:
+        print("====>Getting list of repos Ids")
+        getResp = json.loads(getResp.text)
+        for repo in getResp['repositories']:
+            listRepoIds.append(repo['id'])
+        print("List of IDs:")
+        print(listRepoIds)
+    else:
+        print("Error while getting repos Ids")
+        print("Error: "+getResp.text)
+    return listRepoIds
+    
+
+#################################-Deleting file from a REPO Function-#################################
+def deleteFileFromRepo(repoName:str,branchName:str):
+    url = "https://api.github.com/repos/"+ORG_NAME+"/"+repoName+"/contents/main?ref="+branchName
+    getResp = requests.get(url, headers = header)
+    if getResp.status_code == 200:
+        getResp = json.loads(getResp.text)            
+        respoContent = [content for content in getResp if str(content['name']).endswith(".json.gpg")]
+        if len(respoContent) > 0:
+            ReqBody = {
+                "message": "Deleting gpg file for security reasons [skip actions]",
+                "committer": {
+                    "name": "Python CRED Rotation",
+                    "email": "everardofq@gmail.com"
+                },
+                "sha": respoContent[0]['sha'],
+                "branch": branchName
+            }
+            url = "https://api.github.com/repos/"+ORG_NAME+"/"+repoName+"/contents/"+respoContent[0]['path']
+            getResp = requests.delete(url, headers = header,data=json.dumps(ReqBody))
+            print("===>Deleting gpg file for security reasons")
+            if getResp.status_code == 200:
+                print(respoContent[0]['name']+" file deleted successfully")
+            else:
+                print("Error while deleting ["+respoContent[0]['name']+"] file")
+                print("Error Message: "+getResp.text)
+        else: print(".gpg file not foun on ["+repoName+"] repo")
+        
+    else:
+        print("Error when listing the content of the repo: "+repoName)
+        print(getResp.text)

@@ -57,3 +57,5 @@ if len(repoNames) > 0:
         print("Repo Name: " + repo)
         lm.triggerWorkflow(repo, env)
         
+#Deleting gpg file from automation repo
+lm.deleteFileFromRepo("upsert-git-secrets-and-vars",env)
